@@ -1,0 +1,712 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>IA para la Vida Diaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: sticky tab bar over one view at a time; each class is a timeline of timed blocks with a proportional duration bar. */
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#12201D; --muted:#52625E; --line:#D3DDD9; --soft:#E3EEE9;
+  --accent:#0B6B5D; --accent-ink:#FFFFFF;
+  --hl:#E7A917; --hl-soft:#FBF0CF;
+  --c-explica:#0B6B5D; --c-practica:#E7A917; --c-juego:#C8553D; --c-descanso:#A9B8B3; --c-cierre:#52625E;
+  --code-bg:#EEF3F1;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1513; --surface:#141F1C; --ink:#E6EFEC; --muted:#9AACA7; --line:#27382F; --soft:#173028;
+    --accent:#4FD1B5; --accent-ink:#05201A;
+    --hl:#F2B632; --hl-soft:#2E2612;
+    --c-explica:#4FD1B5; --c-practica:#F2B632; --c-juego:#F08A73; --c-descanso:#4A5C55; --c-cierre:#9AACA7;
+    --code-bg:#0F1A17; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1513; --surface:#141F1C; --ink:#E6EFEC; --muted:#9AACA7; --line:#27382F; --soft:#173028;
+  --accent:#4FD1B5; --accent-ink:#05201A;
+  --hl:#F2B632; --hl-soft:#2E2612;
+  --c-explica:#4FD1B5; --c-practica:#F2B632; --c-juego:#F08A73; --c-descanso:#4A5C55; --c-cierre:#9AACA7;
+  --code-bg:#0F1A17; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--hl);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1040px;margin-inline:auto}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.12;text-wrap:balance;margin:0}
+p{margin:0}
+ul,ol{margin:0;padding-left:1.2em}
+li{margin-block:.25em}
+
+/* header */
+.top{padding-block:28px 18px;display:flex;flex-wrap:wrap;gap:14px 28px;align-items:end;justify-content:space-between}
+.top h1{font-size:clamp(2rem,5.4vw,3.4rem);font-weight:700;letter-spacing:-.02em}
+.top .kicker{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.top .meta{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);display:flex;gap:8px 18px;flex-wrap:wrap}
+.top .meta b{color:var(--ink);font-weight:600}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-block:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+.nav .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin}
+.nav a{white-space:nowrap;text-decoration:none;color:var(--muted);padding:12px 12px;font-weight:600;font-size:.95rem;border-bottom:3px solid transparent}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+
+/* generic */
+.view{padding-block:32px}
+.view[hidden]{display:none}
+.lead{font-size:1.18rem;max-width:62ch;color:var(--ink)}
+.sec{margin-top:40px}
+.sec>h2{font-size:1.55rem;margin-bottom:14px}
+.sec>h3{font-size:1.15rem;margin-bottom:10px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.cols>*{min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.panel h3{font-size:1.05rem;margin-bottom:8px}
+.panel.soft{background:var(--soft);border-color:transparent}
+.panel.warn{background:var(--hl-soft);border-color:var(--hl)}
+.small{font-size:.92rem;color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+
+/* overview class cards */
+.route{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px;margin-top:22px}
+.route a{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.route a:hover{border-color:var(--accent)}
+.route .n{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.route h3{font-size:1.25rem}
+.route p{font-size:.95rem;color:var(--muted)}
+.route .go{margin-top:auto;font-weight:600;color:var(--accent);font-size:.92rem}
+
+/* mix bar */
+.mix{display:flex;height:16px;border-radius:4px;overflow:hidden;margin-top:12px;background:var(--line)}
+.mix span{display:block;min-width:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:.88rem;color:var(--muted)}
+.legend i,.chip i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+.t-explica{--tc:var(--c-explica)} .t-practica{--tc:var(--c-practica)} .t-juego{--tc:var(--c-juego)} .t-descanso{--tc:var(--c-descanso)} .t-cierre{--tc:var(--c-cierre)}
+.legend i,.chip i,.mix span,.bar span{background:var(--tc)}
+
+/* class header */
+.chead .eyebrow{font-family:var(--f-mono);font-size:.8rem;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.chead h2{font-size:clamp(1.8rem,4.6vw,2.7rem);letter-spacing:-.015em}
+.chead .lead{margin-top:14px}
+.goals li::marker{color:var(--accent)}
+.bar{display:flex;height:34px;border-radius:6px;overflow:hidden;gap:2px;margin-top:6px}
+.bar span{display:block;min-width:0;border-radius:2px}
+.ticks{position:relative;height:22px;font-family:var(--f-mono);font-size:.74rem;color:var(--muted);margin-top:4px}
+.ticks span{position:absolute;transform:translateX(-50%)}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.blk{display:grid;grid-template-columns:8.2rem minmax(0,1fr);gap:0 20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.blk .time{font-family:var(--f-mono);font-size:.84rem;color:var(--muted);line-height:1.5}
+.blk .time b{display:block;font-size:1.25rem;color:var(--ink);font-weight:600;font-family:var(--f-display)}
+.blk h4{font-size:1.2rem;margin-bottom:6px}
+.chip{display:inline-flex;align-items:center;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--tc);border-radius:999px;padding:2px 10px;margin-bottom:8px;color:var(--ink)}
+.blk.t-descanso{background:transparent;border-style:dashed}
+.blk .body>*+*{margin-top:10px}
+.blk .body{min-width:0}
+.steps{margin-top:8px}
+.tip{background:var(--hl-soft);border-radius:6px;padding:8px 12px;font-size:.95rem}
+.tip b{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;margin-right:6px}
+
+/* prompts */
+.prompt{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.prompt pre{margin:0;flex:1;min-width:0;white-space:pre-wrap;word-break:break-word;font-family:var(--f-mono);font-size:.84rem;line-height:1.5}
+.btn{font:inherit;font-size:.82rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.ok{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* links */
+.links{display:flex;flex-direction:column;gap:8px;list-style:none;padding:0}
+.links li{margin:0}
+.lk{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;min-width:0}
+.lk:hover{border-color:var(--accent)}
+.lk .k{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);flex:none;width:4.6rem}
+.lk .t{min-width:0;flex:1}
+.lk .t b{display:block;font-weight:600;overflow-wrap:anywhere}
+.lk .t span{font-size:.86rem;color:var(--muted)}
+.inl{display:flex;flex-wrap:wrap;gap:8px}
+.inl a{font-size:.88rem;font-weight:600;text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;background:var(--bg);color:var(--ink)}
+.inl a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* details */
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+details+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600}
+details p{margin-top:8px;color:var(--muted)}
+
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.95rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+
+/* checklist */
+.chk{list-style:none;padding:0}
+.chk li{margin:0}
+.chk label{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.chk input{margin-top:.35em;accent-color:var(--accent);width:1.05em;height:1.05em;flex:none}
+.chk input:checked+span{color:var(--muted);text-decoration:line-through}
+
+.formula{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}
+.formula div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.formula b{display:block;font-family:var(--f-display);font-size:2.1rem;color:var(--accent);line-height:1}
+.formula strong{display:block;margin-block:4px 4px}
+.formula span{font-size:.92rem;color:var(--muted)}
+
+.traffic{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.traffic div{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface);min-width:0}
+.traffic i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px}
+.traffic .g i{background:#2E9D5B}.traffic .y i{background:#E7A917}.traffic .r i{background:#D2473A}
+.traffic strong{display:block;margin-bottom:4px}
+
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .blk{grid-template-columns:minmax(0,1fr);gap:8px}
+  .blk .time{display:flex;gap:10px;align-items:baseline}
+  .blk .time b{display:inline;font-size:1.1rem}
+  .lk{flex-direction:column;gap:2px}
+  .lk .k{width:auto}
+}
+@media (prefers-reduced-motion:no-preference){
+  .route a,.lk,.btn{transition:border-color .15s}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="kicker">Módulo de formación · Prototipo para el docente</div>
+      <h1>IA para la vida diaria</h1>
+    </div>
+    <div class="meta" id="topmeta"></div>
+  </header>
+</div>
+<nav class="nav" aria-label="Secciones del módulo"><div class="wrap" id="nav"></div></nav>
+<main class="wrap" id="main"></main>
+
+<script>
+/* ============ DATOS ============ */
+var TYPES = {
+  explica:{n:"Explicación"}, practica:{n:"Práctica"}, juego:{n:"Dinámica"}, descanso:{n:"Descanso"}, cierre:{n:"Cierre"}
+};
+
+/* Recursos verificados. kind: video | web | curso | guia */
+var R = {
+  bigbook:{k:"video",t:"¿Qué es la Inteligencia Artificial? Explicado en 5 minutos",s:"BIG BOOK · 5 min · español",u:"https://www.youtube.com/watch?v=XuWMWPwdlik"},
+  prompt10:{k:"video",t:"Cómo hacer un buen prompt en ChatGPT (en 10 minutos)",s:"El MoIA · español",u:"https://www.youtube.com/watch?v=TgsaRJzN-wY"},
+  learnfree:{k:"video",t:"Qué es un prompt: escribe de forma correcta en ChatGPT",s:"LearnFree en Español · curso Cómo usar ChatGPT",u:"https://www.youtube.com/watch?v=dfrtvMpUKxs"},
+  canva:{k:"video",t:"Cómo crear imágenes con Inteligencia Artificial en Canva",s:"Oscar Andrés Calderón Bedoya · español",u:"https://www.youtube.com/watch?v=kesSRLD-UHI"},
+  nlm:{k:"video",t:"Curso de NotebookLM en español y gratis (guía definitiva)",s:"El Tío Tech · español · ver fragmentos, es largo",u:"https://www.youtube.com/watch?v=maex0snV8lQ"},
+  tools10:{k:"video",t:"10 herramientas gratuitas con IA que te sorprenderán",s:"Xavier Mitjana · español",u:"https://www.youtube.com/watch?v=SdiBKdlunRA"},
+  deep1:{k:"video",t:"Cómo detectar deepfakes y evitar fraudes con inteligencia artificial",s:"Dinero en Imagen · español",u:"https://www.youtube.com/watch?v=uffR__hD7Eo"},
+  deep2:{k:"video",t:"Cómo detectar videos falsos y deepfakes hechos con IA",s:"Marcos Di Toro · español",u:"https://www.youtube.com/watch?v=i8FrsgFVG5o"},
+  sheets1:{k:"video",t:"Inteligencia artificial en hoja de cálculo (Google Sheets y Gemini)",s:"KARLOSNUN · español",u:"https://www.youtube.com/watch?v=fK4JVkqh8LU"},
+  sheets2:{k:"video",t:"Trabaja de manera más inteligente con la IA de Hojas de cálculo de Google",s:"Stewart Gauld en español",u:"https://www.youtube.com/watch?v=ApeYDOPkzKo"},
+  karp1:{k:"video",t:"How I use LLMs",s:"Andrej Karpathy · inglés · para el docente, ideas de uso real",u:"https://www.youtube.com/watch?v=EWvNQjAaOHw"},
+  karp2:{k:"video",t:"Intro to Large Language Models (charla de 1 hora)",s:"Andrej Karpathy · inglés · para el docente, profundizar",u:"https://www.youtube.com/watch?v=zjkBMFhNj_g"},
+  b3:{k:"video",t:"But what is a neural network?",s:"3Blue1Brown · inglés con subtítulos · opcional para curiosos",u:"https://www.youtube.com/watch?v=aircAruvnKk"},
+  tm:{k:"web",t:"Teachable Machine",s:"Google · entrena un modelo con tu cámara, sin código",u:"https://teachablemachine.withgoogle.com/"},
+  qd:{k:"web",t:"Quick, Draw!",s:"Google · una red neuronal adivina tus dibujos",u:"https://quickdraw.withgoogle.com/"},
+  gem:{k:"web",t:"Gemini",s:"Chatbot de Google · entra con una cuenta Gmail",u:"https://gemini.google.com/"},
+  gpt:{k:"web",t:"ChatGPT",s:"Chatbot de OpenAI · plan gratuito con límites",u:"https://chatgpt.com/"},
+  cla:{k:"web",t:"Claude",s:"Chatbot de Anthropic · plan gratuito con límites",u:"https://claude.ai/"},
+  cop:{k:"web",t:"Microsoft Copilot",s:"Asistente de Microsoft · chat e imágenes",u:"https://copilot.microsoft.com/"},
+  ppx:{k:"web",t:"Perplexity",s:"Buscador con IA que muestra sus fuentes",u:"https://www.perplexity.ai/"},
+  cnv:{k:"web",t:"Canva · generador de imágenes con IA",s:"Cuenta gratuita: hasta 50 usos de texto a imagen en total (según Canva)",u:"https://www.canva.com/es_co/funciones/generador-de-imagenes-por-ia/"},
+  ideo:{k:"web",t:"Ideogram",s:"Imágenes con IA, bueno para texto dentro de la imagen · revisar plan gratuito",u:"https://ideogram.ai/"},
+  nlmw:{k:"web",t:"NotebookLM (ahora aparece como Gemini Notebook)",s:"Sube tus documentos y conversa con ellos",u:"https://notebook.google/"},
+  nlmb:{k:"guia",t:"Llegan los resúmenes de audio en español a NotebookLM",s:"Blog oficial de Google",u:"https://blog.google/intl/es-419/noticias-de-la-empresa/tecnologia/llegan-los-resumenes-de-audio-en-espanol-a-notebooklm/"},
+  el:{k:"web",t:"ElevenLabs",s:"Voz sintética y efectos · revisar plan gratuito",u:"https://elevenlabs.io/"},
+  suno:{k:"web",t:"Suno",s:"Crea canciones desde texto · plan gratuito (hasta 10 por día según Suno)",u:"https://suno.com/"},
+  wfr:{k:"web",t:"Which Face Is Real",s:"Juego: ¿cuál rostro es real y cuál lo generó una IA?",u:"https://www.whichfaceisreal.com/"},
+  oai:{k:"guia",t:"Buenas prácticas de prompts (ayuda de OpenAI, en español)",s:"Claridad, contexto, iterar, tono",u:"https://help.openai.com/es-es/articles/10032626-prompt-engineering-best-practices-for-chatgpt"},
+  xat:{k:"guia",t:"Crea imágenes con IA gratis: 15 modelos",s:"Xataka · comparativa para elegir herramienta",u:"https://www.xataka.com/basics/14-herramientas-para-crear-imagenes-ia-gratis"},
+  xat2:{k:"guia",t:"17 cursos y tutoriales de ChatGPT online y gratis",s:"Xataka · para seguir aprendiendo",u:"https://www.xataka.com/basics/17-cursos-tutoriales-chatgpt-online-gratis-para-mejorar-prompts-uso-inteligencia-artificial"},
+  eai:{k:"curso",t:"Elements of AI (en español)",s:"Universidad de Helsinki · gratuito · a tu ritmo, sin programar",u:"https://www.elementsofai.com/es"},
+  gai:{k:"curso",t:"Google AI Essentials",s:"Google · introductorio · 4 h 45 min · puede tener costo, confirmar al inscribirse",u:"https://www.skills.google/course_templates/1224?locale=es"}
+};
+var KIND = {video:"Video",web:"Sitio",curso:"Curso",guia:"Lectura"};
+
+var CLASES = [
+{
+ id:"clase-1", n:1, title:"Conociendo la IA", sub:"Qué es, qué no es y mi primer chat",
+ obj:"Que cada alumno pueda explicar con sus palabras qué es la inteligencia artificial, reconozca dónde ya la usa sin saberlo y tenga su primera conversación útil con un chatbot.",
+ goals:[
+  "Explicar qué es la IA y en qué se diferencia de un programa normal.",
+  "Encontrar al menos cinco usos de IA que ya tiene en su celular.",
+  "Crear su cuenta en un chatbot y hacerle cinco preguntas útiles.",
+  "Detectar una respuesta inventada (alucinación) y saber que hay que verificar."
+ ],
+ prep:[
+  "Pedir a cada alumno una cuenta de Gmail que recuerde su contraseña. Verificarlo la semana anterior.",
+  "Probar el wifi y el proyector. Tener un plan B impreso o en diapositivas por si falla internet.",
+  "Preparar cuatro pares de textos o imágenes (uno humano y uno de IA) para el juego de apertura.",
+  "Tener abiertos Gemini, ChatGPT y Claude con tu propia sesión iniciada para las demostraciones."
+ ],
+ blocks:[
+  {m:15,type:"juego",title:"¿Humano o IA?",
+   d:"Muestra cuatro pares de textos o imágenes. En cada par, uno lo hizo una persona y otro una IA. Los alumnos votan levantando la mano y después revelas la respuesta. Cierra preguntando qué pistas los hicieron dudar.",
+   tip:"Genera los textos de IA el día anterior con el chatbot. Elige temas cercanos al grupo: un saludo, un aviso de venta, una receta."},
+  {m:25,type:"explica",title:"¿Qué es la inteligencia artificial?",
+   d:"Explica la IA como un programa que aprende patrones a partir de ejemplos, en lugar de seguir reglas escritas una por una. Usa la analogía del catador de café: después de probar miles de granos aprende a distinguir uno bueno de uno malo sin que nadie le dé una lista de reglas.",
+   steps:["Programa tradicional: reglas fijas. IA: aprende de ejemplos.","IA generativa: crea texto, imágenes, audio. Es la que está de moda desde 2022.","Mini línea de tiempo: 1956 nace el término, 2022 llega ChatGPT al público general.","Video corto y conversación de dos minutos."],
+   links:["bigbook"]},
+  {m:25,type:"practica",title:"Cacería de IA en tu celular",
+   d:"En parejas, durante 10 minutos, buscan cinco lugares de su celular donde ya hay IA. Pistas: teclado que predice palabras, desbloqueo con la cara, Google Maps con el tráfico, recomendaciones de YouTube o Spotify, filtro de spam del correo, traductor, asistente de voz, alertas antifraude del banco. Después comparten los hallazgos y los anotan en el tablero.",
+   tip:"Pide que cada pareja diga un uso que nadie más haya mencionado."},
+  {m:10,type:"descanso",title:"Descanso",d:"Aprovecha para que los alumnos terminen de crear su cuenta de Gmail si alguien no la tiene."},
+  {m:30,type:"practica",title:"Entrena tu propia IA en 10 minutos",
+   d:"Cada pareja entrena un modelo en Teachable Machine con dos clases, por ejemplo mano abierta y puño, o dos objetos del salón. Primero con pocos ejemplos y luego con muchos, para ver cómo mejora. La idea central: la IA es tan buena como los ejemplos con los que aprende. Si la cámara no funciona, usan Quick, Draw! como alternativa.",
+   links:["tm","qd"]},
+  {m:35,type:"practica",title:"Mi primer chat con una IA",
+   d:"Cada alumno entra a Gemini con su Gmail (y, si quiere, a ChatGPT o Claude) y prueba cinco preguntas guiadas. Después cada uno escribe una pregunta propia sobre algo que le interese de verdad.",
+   prompts:[
+    "Explícame qué es la inteligencia artificial como si tuviera 10 años.",
+    "Dame 5 ideas de comidas fáciles con arroz, huevo y tomate.",
+    "Redacta un mensaje de WhatsApp amable para recordarle a un cliente que tiene una factura pendiente.",
+    "Tradúceme al inglés: Buenos días, quisiera reservar una habitación para dos personas.",
+    "¿Qué debo tener en cuenta para sembrar café en una finca de montaña?"
+   ],
+   links:["gem","gpt","cla"]},
+  {m:20,type:"juego",title:"Pilla a la IA",
+   d:"Reto: lograr que el chatbot se equivoque. Los alumnos le preguntan por cosas muy locales, por datos que no existen o por libros inventados. Cuando la IA inventa algo con total seguridad, se explica el concepto de alucinación y por qué siempre hay que verificar.",
+   prompts:[
+    "Resúmeme el libro Los secretos del café de El Peñol, publicado en 1987.",
+    "Dame la biografía de un personaje inventado: Don Eustaquio Valencia, alcalde de un pueblo de Antioquia en 1932."
+   ],
+   tip:"Si la IA responde que no tiene información, también vale: muestra que algunas herramientas son más cuidadosas que otras."},
+  {m:20,type:"cierre",title:"Quiz relámpago y tarea",
+   d:"Quiz oral de cuatro preguntas (abajo). Presenta la bitácora de la semana y explica la tarea."}
+ ],
+ resources:["bigbook","tm","qd","gem","karp1","b3"],
+ tarea:"Usa un chatbot tres veces esta semana para algo real de tu vida. Anota en la bitácora qué pediste, qué respondió y qué corregiste.",
+ quiz:[
+  ["¿La IA piensa como una persona?","No. Detecta patrones en muchos datos y predice la respuesta más probable. Puede sonar muy convincente sin entender lo que dice."],
+  ["¿Qué es una alucinación?","Una respuesta inventada que la IA presenta con total seguridad. Por eso se verifica lo importante."],
+  ["Nombra tres lugares donde usas IA sin darte cuenta.","Respuesta libre: teclado, mapas, recomendaciones, filtro de spam, desbloqueo facial."],
+  ["Si entrenas una IA con muy pocos ejemplos, ¿qué pasa?","Se equivoca más y puede quedar sesgada hacia lo poco que vio."]
+ ],
+ tips:[
+  "No prometas magia. Muestra los fallos desde la primera clase: así los alumnos aprenden a confiar con criterio.",
+  "Mantén el vocabulario simple. La palabra modelo se puede explicar como el cerebro entrenado de la IA.",
+  "Si alguien no tiene Gmail o su cuenta falla, ponlo en pareja con otro alumno y que ambos participen."
+ ]
+},
+{
+ id:"clase-2", n:2, title:"Hablar con la IA", sub:"Prompts y chatbots para el día a día",
+ obj:"Que los alumnos aprendan a pedir las cosas de forma clara, comparen varios chatbots y resuelvan problemas cotidianos con ellos, verificando siempre lo que reciben.",
+ goals:[
+  "Escribir prompts con la fórmula Rol, Contexto, Tarea y Formato.",
+  "Comparar la respuesta de al menos tres chatbots al mismo pedido.",
+  "Resolver cinco casos de la vida diaria: cocina, trámites, estudio, idiomas y paseos.",
+  "Verificar una respuesta usando fuentes y la regla de las dos fuentes."
+ ],
+ prep:[
+  "Imprimir la cartilla R·C·T·F de la sección Material del alumno.",
+  "Preparar la tabla comparativa de chatbots (una por pareja).",
+  "Imprimir o proyectar las cinco tarjetas de estación con sus prompts base.",
+  "Revisar que todos tengan al menos una cuenta de chatbot funcionando."
+ ],
+ blocks:[
+  {m:15,type:"juego",title:"Calentamiento y bitácoras",
+   d:"Cinco preguntas rápidas de repaso de la clase 1 en forma de concurso por parejas. Luego dos o tres voluntarios cuentan qué hicieron con la IA durante la semana."},
+  {m:25,type:"explica",title:"Anatomía de un buen prompt",
+   d:"Presenta la fórmula R·C·T·F: Rol (quién eres para la IA), Contexto (la situación), Tarea (qué quieres que haga) y Formato (cómo quieres la respuesta). Añade dos extras opcionales: tono y un ejemplo. Muestra en vivo la diferencia entre un pedido vago y uno completo.",
+   prompts:[
+    "Dame una receta.",
+    "Eres un chef de cocina colombiana. Tengo arroz, huevo, tomate y cebolla y 20 minutos. Dame una receta fácil para dos personas. Responde con lista de ingredientes y pasos numerados, en tono amigable."
+   ],
+   links:["prompt10","oai"]},
+  {m:30,type:"practica",title:"Taller: de prompt flojo a prompt bueno",
+   d:"En parejas reescriben cinco pedidos flojos aplicando la fórmula, los prueban y comparan con el original. Cada pareja presenta su mejor antes y después.",
+   steps:["Hazme un plan.","Escribe un correo.","Explícame esto.","Ideas para mi negocio.","Ayúdame con mi tarea."],
+   tip:"Insiste en iterar: la primera respuesta rara vez es la final. Enseña frases como hazlo más corto, ahora con un tono más formal, dame tres opciones distintas."},
+  {m:10,type:"descanso",title:"Descanso",d:"Buen momento para dejar las mesas listas para el duelo de chatbots."},
+  {m:35,type:"juego",title:"Duelo de chatbots",
+   d:"Cada pareja elige un prompt y lo envía a tres chatbots (por ejemplo ChatGPT, Gemini y Claude, o Copilot). Llenan una tabla con claridad, utilidad, tono y errores. Conclusión del grupo: no hay un mejor para todo, cada uno tiene sus fortalezas y cambian con el tiempo.",
+   prompts:[
+    "Eres un asesor para pequeños negocios. Mi tienda vende café de origen y quiere atraer turistas que visitan un embalse los fines de semana. Dame 5 ideas concretas y baratas, cada una en una frase, y marca la más fácil de empezar."
+   ],
+   links:["gpt","gem","cla","cop"]},
+  {m:30,type:"practica",title:"Estaciones de la vida diaria",
+   d:"Cinco estaciones de 6 minutos. Los grupos rotan, aplican la fórmula y anotan lo que más les sirvió. El docente circula resolviendo dudas.",
+   steps:[
+    "Cocina: menú de la semana con lo que hay en la nevera y un presupuesto.",
+    "Trámites: redactar una carta formal o un derecho de petición con sus datos de ejemplo, sin datos reales.",
+    "Estudio: explicar un tema difícil con una analogía y generar un mini examen de 5 preguntas.",
+    "Idiomas: practicar una conversación en inglés con la IA corrigiendo errores.",
+    "Paseos: plan de un día por el Oriente Antioqueño con horarios, presupuesto y alternativa si llueve."
+   ],
+   prompts:[
+    "Quiero practicar inglés nivel básico. Actúa como un mesero en un restaurante. Habla solo en inglés con frases cortas, espera mi respuesta y al final corrígeme los errores en español."
+   ]},
+  {m:20,type:"practica",title:"Buscar con fuentes y verificar",
+   d:"Comparan la respuesta de un chatbot con la de un buscador con IA que cita fuentes. Practican la regla de las dos fuentes: un dato importante se confirma en al menos dos lugares confiables. Revisan los enlaces que muestra la herramienta.",
+   prompts:[
+    "¿Cuáles son los requisitos actuales para renovar la licencia de conducción en Colombia? Cita las fuentes oficiales."
+   ],
+   links:["ppx"],
+   tip:"Elige una pregunta cuya respuesta cambie con el tiempo para mostrar por qué hay que revisar la fecha de la fuente."},
+  {m:15,type:"cierre",title:"Cierre, cartilla y tarea",
+   d:"Cada alumno elige su prompt favorito de la clase y lo guarda en su cartilla. Se explica la tarea."}
+ ],
+ resources:["prompt10","learnfree","oai","ppx","xat2","tools10"],
+ tarea:"Crea tu propia lista de tres prompts que usarías cada semana (por ejemplo, para comidas, mensajes o estudio) y pruébalos. Anota cuál funcionó mejor y por qué.",
+ quiz:[
+  ["¿Qué significan las letras R·C·T·F?","Rol, Contexto, Tarea y Formato."],
+  ["Si la primera respuesta no te sirve, ¿qué haces?","Pides ajustes: más corto, otro tono, con ejemplos, o explicas mejor lo que necesitas."],
+  ["¿Por qué comparar varios chatbots?","Porque responden distinto y ninguno es el mejor en todo."],
+  ["¿Qué es la regla de las dos fuentes?","Confirmar un dato importante en al menos dos lugares confiables."]
+ ],
+ tips:[
+  "Deja que se equivoquen escribiendo prompts. Corregir su propio pedido enseña más que ver el tuyo perfecto.",
+  "Pide que nunca usen datos reales de otras personas en los ejercicios de trámites.",
+  "Si un grupo termina antes, que prueben el mismo prompt pidiendo que la IA les haga preguntas antes de responder."
+ ]
+},
+{
+ id:"clase-3", n:3, title:"IA creativa", sub:"Imágenes, audio, resúmenes y qué es real",
+ obj:"Que los alumnos creen contenido propio con IA (imágenes, audio, música y resúmenes de documentos) y desarrollen criterio para distinguir lo real de lo generado.",
+ goals:[
+  "Escribir un prompt de imagen con sujeto, estilo, luz y formato.",
+  "Crear un afiche o logo sencillo para un negocio o evento real.",
+  "Usar IA para transcribir, crear una voz o una canción corta.",
+  "Resumir un documento con NotebookLM y reconocer señales de contenido falso."
+ ],
+ prep:[
+  "Cada alumno debe tener cuenta gratuita en Canva. Crearlas antes si es posible.",
+  "Llevar un PDF de práctica por pareja (un manual, un reglamento, apuntes de clase).",
+  "Probar con anticipación Suno, ElevenLabs y NotebookLM en su capa gratuita y anotar los límites. Los planes gratuitos cambian.",
+  "Repartir el uso de Canva y de imágenes: cada alumno tiene pocos intentos gratuitos, así que escribir bien el prompt antes de enviarlo.",
+  "Preparar 6 imágenes: 3 reales y 3 generadas, para el juego final."
+ ],
+ blocks:[
+  {m:10,type:"juego",title:"Calentamiento: la mejor tarea de la semana",
+   d:"Cada alumno enseña en 30 segundos un prompt de su semana. El grupo vota el más útil."},
+  {m:25,type:"explica",title:"Cómo una IA crea imágenes",
+   d:"Explicación sencilla: el modelo vio millones de imágenes con su descripción y aprendió a ir transformando ruido en una imagen que encaja con el texto. Muestra ejemplos buenos y fallidos (manos, texto, proporciones). Habla de derechos de autor, marcas de agua y de pedir permiso cuando se usan personas reales.",
+   links:["xat","cnv"]},
+  {m:50,type:"practica",title:"Taller de imágenes: afiche para un negocio real",
+   d:"Cada alumno elige un negocio, finca, evento o causa que conozca. Genera cuatro opciones de imagen, itera dos veces y arma un afiche en Canva con texto y datos. Al final se hace una galería: cada persona muestra su afiche y cuenta qué cambió entre la primera y la última versión.",
+   steps:["Sujeto: qué se ve.","Estilo: fotografía, acuarela, ilustración plana.","Luz y colores.","Encuadre y formato: horizontal, vertical, cuadrado.","Texto: mejor agregarlo después en Canva para evitar errores de ortografía."],
+   prompts:[
+    "Fotografía realista de una taza de café humeante sobre una mesa de madera, con un paisaje de montañas verdes y niebla al fondo, luz suave de la mañana, formato vertical, espacio libre arriba para escribir texto.",
+    "Ilustración plana y colorida de un grupo de turistas en kayak en un embalse rodeado de montañas, estilo afiche de festival, colores cálidos."
+   ],
+   links:["cnv","canva","ideo"]},
+  {m:10,type:"descanso",title:"Descanso",d:"Deja los afiches guardados en Canva."},
+  {m:30,type:"practica",title:"Audio, voz y música",
+   d:"Tres mini experimentos de 10 minutos. Primero, dictar un mensaje y dejar que se convierta en texto. Segundo, escuchar una voz sintética leyendo un texto corto. Tercero, crear un jingle de 30 segundos para el negocio del afiche. Conversa sobre el uso responsable de la voz de otras personas.",
+   prompts:[
+    "Crea una canción alegre de 30 segundos tipo carranga moderna para promocionar un café de montaña. Letra corta y fácil de recordar, que mencione el aroma y la mañana."
+   ],
+   links:["suno","el"],
+   tip:"Si alguno de los sitios cambia sus planes gratuitos, ten listo un audio de ejemplo ya generado para la demostración."},
+  {m:35,type:"practica",title:"NotebookLM: conversa con tus documentos",
+   d:"Cada pareja sube un PDF a NotebookLM. Piden un resumen, hacen tres preguntas sobre el contenido y generan un resumen de audio en español. Se comenta una diferencia clave: esta herramienta responde apoyándose en los documentos que subiste, así que reduce las invenciones y muestra de dónde sacó cada dato.",
+   prompts:[
+    "Resume este documento en 5 puntos para alguien que nunca lo ha leído.",
+    "¿Qué fechas, montos o plazos importantes aparecen en el documento? Preséntalos en una tabla.",
+    "Hazme 5 preguntas de práctica sobre el documento, con sus respuestas."
+   ],
+   links:["nlmw","nlmb","nlm"]},
+  {m:20,type:"juego",title:"¿Real o generado? Deepfakes y ética",
+   d:"Juego con las seis imágenes preparadas y con Which Face Is Real. Después se revisan señales de alerta: manos y dientes raros, texto deforme, fondos incoherentes, voces sin emoción, noticias sin fuente. Se acuerdan tres reglas del grupo: pedir permiso, no suplantar a nadie y avisar cuando algo fue hecho con IA.",
+   links:["wfr","deep1","deep2"]}
+ ],
+ resources:["cnv","canva","xat","suno","nlmw","nlm","wfr","deep1"],
+ tarea:"Crea con IA un recurso real: un afiche para una actividad de tu familia o comunidad, o un resumen de un documento que necesites leer. Trae el resultado a la clase 4.",
+ quiz:[
+  ["¿Por qué conviene agregar el texto del afiche en Canva y no en el generador?","Porque los generadores suelen deformar las letras o escribir mal."],
+  ["¿Qué ventaja tiene NotebookLM frente a un chatbot general?","Responde con base en los documentos que subes y puede mostrar de dónde sacó cada dato."],
+  ["Menciona dos señales de que una imagen puede ser generada.","Manos o dientes raros, texto deforme, fondo incoherente, aspecto demasiado perfecto."],
+  ["¿Qué debes hacer antes de usar la voz o el rostro de otra persona?","Pedir su permiso."]
+ ],
+ tips:[
+  "Reserva tiempo para que todos terminen su afiche: es el momento donde más se emocionan.",
+  "Aprovecha el trabajo de los alumnos como material para la galería de la clase 4.",
+  "Si el internet se pone lento, haz que trabajen por parejas y reparte el uso de la herramienta."
+ ]
+},
+{
+ id:"clase-4", n:4, title:"IA para el trabajo y proyecto final", sub:"Productividad, uso responsable y mi asistente propio",
+ obj:"Que los alumnos apliquen la IA a su trabajo y estudio con criterio, conozcan los riesgos principales y presenten un proyecto final que resuelva un problema real.",
+ goals:[
+  "Usar IA para redactar correos, resumir textos y ordenar tareas.",
+  "Pedir fórmulas y análisis sencillos para una hoja de cálculo.",
+  "Aplicar el semáforo de datos antes de compartir información con una IA.",
+  "Presentar un proyecto de 3 minutos con prompt, herramienta y resultado."
+ ],
+ prep:[
+  "Preparar una hoja de cálculo de práctica con unos 30 registros de ventas ficticias.",
+  "Imprimir la ficha del proyecto final y la rúbrica.",
+  "Organizar equipos de 2 o 3 personas con anticipación.",
+  "Definir si habrá certificado de participación y cómo se entregará."
+ ],
+ blocks:[
+  {m:10,type:"juego",title:"Galería de creaciones",
+   d:"Se proyectan o pasan por la sala los afiches, canciones y resúmenes de la clase anterior. Cada alumno recibe un comentario positivo de un compañero."},
+  {m:30,type:"explica",title:"La IA como asistente de trabajo",
+   d:"Casos de uso: redactar y mejorar correos, resumir actas y PDFs, preparar listas de tareas, ensayar una entrevista, traducir, crear plantillas. Demostración en vivo de cada uno. Mensaje central: la IA hace el primer borrador, la persona decide y revisa.",
+   prompts:[
+    "Eres asistente administrativo. Redacta un correo formal, de máximo 120 palabras, para pedir una cita de reunión la próxima semana. Tono cordial. Dame dos versiones.",
+    "Estas son mis notas de la reunión: [pega tus notas]. Conviértelas en un acta con: decisiones, responsables y fechas.",
+    "Simula que eres un entrevistador para el cargo de auxiliar administrativo. Hazme una pregunta a la vez y, después de mi respuesta, dame una mejora."
+   ],
+   links:["karp1","gai"]},
+  {m:30,type:"practica",title:"Taller: hojas de cálculo con ayuda de IA",
+   d:"Con la hoja de práctica, los alumnos piden a un chatbot fórmulas y explicaciones. Prueban sumar por categoría, buscar un dato, calcular porcentajes y sugerir un gráfico. Como usamos solo la capa gratuita, el camino principal es pedir la fórmula al chatbot y pegarla en la hoja. Las funciones de IA integradas en Excel o Google Sheets pueden requerir plan de pago o depender del tipo de cuenta: se muestran solo si alguien las tiene disponibles.",
+   prompts:[
+    "Tengo una hoja con columnas A=Fecha, B=Producto, C=Cantidad, D=Valor. Dame la fórmula para sumar el valor total de un producto específico y explícamela paso a paso.",
+    "Explícame en palabras simples qué hace esta fórmula: =SUMAR.SI(B:B;F2;D:D)",
+    "¿Qué gráfico me recomiendas para ver cuál producto se vende más cada mes? Dime los pasos en Excel."
+   ],
+   links:["sheets1","sheets2"],
+   tip:"Si usan Excel en español, las fórmulas llevan punto y coma como separador. Dilo antes de que se pierdan."},
+  {m:10,type:"descanso",title:"Descanso",d:"Mientras tanto, los equipos eligen su problema para el proyecto."},
+  {m:15,type:"explica",title:"Uso responsable y seguridad",
+   d:"Presenta el semáforo de datos (ver Material del alumno). Habla de privacidad, sesgos, estafas con voz clonada o mensajes falsos de familiares en apuros, y menciona que en Colombia existe la Ley 1581 de 2012 sobre protección de datos personales. Cierra con una regla simple: ante la duda, no lo compartas.",
+   tip:"Pide que cada alumno cuente una estafa o mensaje sospechoso que haya visto. Normaliza que a cualquiera le puede pasar.",
+   links:["deep1"]},
+  {m:55,type:"practica",title:"Proyecto final: mi asistente de IA",
+   d:"Los equipos escogen un problema real (de su casa, trabajo, estudio o negocio) y construyen una solución con IA: un prompt maestro que se pueda reutilizar, la herramienta que usarán y un ejemplo de resultado. Preparan una demostración de 3 minutos. El docente acompaña con revisiones rápidas de 5 minutos por equipo.",
+   steps:["Problema: qué tarea repetitiva o difícil quieres mejorar.","Herramienta: chatbot, imagen, audio o NotebookLM.","Prompt maestro con la fórmula R·C·T·F.","Prueba con un caso real y una mejora.","Riesgos: qué datos no vas a compartir y cómo vas a verificar."],
+   tip:"Ideas de proyecto: asistente de recetas, generador de mensajes para clientes, resumidor de tareas, tutor de inglés, plan de estudio personal, ayudante de cotizaciones."},
+  {m:20,type:"juego",title:"Presentaciones y coevaluación",
+   d:"Cada equipo presenta en 3 minutos y recibe 1 minuto de preguntas. Los demás evalúan con una versión corta de la rúbrica y dejan un comentario de mejora."},
+  {m:10,type:"cierre",title:"Cierre y siguientes pasos",
+   d:"Se entrega la ruta de aprendizaje (Elements of AI y Google AI Essentials), una encuesta de satisfacción y el certificado de participación si aplica.",
+   links:["eai","gai"]}
+ ],
+ resources:["karp1","gai","eai","sheets1","sheets2","deep1","xat2"],
+ tarea:"No hay tarea formal. Sugerencia: elegir un solo hábito (por ejemplo, planear la semana con IA cada domingo) y mantenerlo durante un mes.",
+ quiz:[
+  ["¿Qué datos nunca debes pegar en un chatbot?","Contraseñas, números de cuentas o tarjetas, documentos de identidad y datos de otras personas."],
+  ["¿Quién es responsable de lo que envías usando un texto de IA?","Tú. La IA hace el borrador y tú lo revisas."],
+  ["¿Qué haces si recibes un audio de un familiar pidiendo dinero urgente?","Cuelgas y llamas al número real de esa persona. Puede ser una voz clonada."]
+ ],
+ tips:[
+  "Si hay muchos equipos, reduce las presentaciones a 2 minutos o muestra solo los resultados.",
+  "Premia el proceso, no solo el resultado: valora cómo mejoraron el prompt y cómo verificaron.",
+  "Recoge fotos o capturas de los proyectos (con permiso) para mostrar el impacto del módulo."
+ ]
+}
+];
+
+var GLOSARIO = [
+ ["Inteligencia artificial","Programas que aprenden patrones a partir de datos para hacer tareas que antes requerían una persona."],
+ ["Modelo","El programa ya entrenado. Es la parte de la IA que responde."],
+ ["Chatbot","Asistente con el que conversas escribiendo, como ChatGPT, Gemini o Claude."],
+ ["Prompt","Lo que le escribes o le dices a la IA para pedirle algo."],
+ ["IA generativa","IA que crea contenido nuevo: texto, imágenes, audio, música."],
+ ["Alucinación","Respuesta inventada que la IA presenta con seguridad."],
+ ["Sesgo","Tendencia injusta o incompleta que la IA aprende de los datos con que fue entrenada."],
+ ["Deepfake","Video, audio o imagen falsos hechos con IA que imitan a una persona real."],
+ ["Entrenar","Mostrarle muchos ejemplos al sistema para que aprenda a reconocer patrones."],
+ ["Contexto","La información de fondo que le das a la IA para que su respuesta sea útil."]
+];
+
+var REGLAS = [
+ "Sé específico: dile exactamente qué necesitas.",
+ "Da contexto: para quién, para qué, en qué situación.",
+ "Pide el formato: lista, tabla, correo, 5 líneas.",
+ "Itera: si no sirve, pide ajustes en lugar de empezar de cero.",
+ "Verifica: lo importante se confirma en dos fuentes.",
+ "Protege tus datos: usa el semáforo.",
+ "Lee antes de copiar: el borrador de la IA no es el texto final.",
+ "Tú decides: la responsabilidad es tuya."
+];
+
+var EJERCICIOS = [
+ {c:"Clase 1",items:["Anoté 5 lugares donde hay IA en mi celular.","Entrené un modelo en Teachable Machine.","Creé mi cuenta en un chatbot.","Encontré una respuesta inventada de la IA.","Hice mi tarea: 3 usos reales de un chatbot."]},
+ {c:"Clase 2",items:["Reescribí 5 prompts con la fórmula R·C·T·F.","Comparé 3 chatbots con el mismo prompt.","Resolví las 5 estaciones de la vida diaria.","Verifiqué un dato con dos fuentes.","Armé mi lista de 3 prompts favoritos."]},
+ {c:"Clase 3",items:["Generé 4 imágenes y mejoré mi prompt dos veces.","Armé un afiche en Canva.","Probé audio, voz o música con IA.","Resumí un documento con NotebookLM.","Jugué a distinguir real y generado."]},
+ {c:"Clase 4",items:["Redacté un correo con ayuda de IA.","Pedí y entendí una fórmula de hoja de cálculo.","Apliqué el semáforo de datos.","Entregué la ficha de mi proyecto final.","Presenté mi proyecto en 3 minutos."]}
+];
+
+var RUBRICA = {
+ cols:["Criterio","Inicial (1)","Básico (2)","Competente (3)","Destacado (4)"],
+ rows:[
+  ["Comprensión de conceptos","Confunde IA con magia o con un buscador.","Explica la idea general con ayuda.","Explica con sus palabras qué es y cómo aprende.","Explica y da ejemplos propios, incluidos límites y riesgos."],
+  ["Calidad de los prompts","Pedidos vagos de una línea.","Incluye tarea y algo de contexto.","Usa Rol, Contexto, Tarea y Formato.","Itera con criterio y logra resultados reutilizables."],
+  ["Verificación y criterio","Acepta lo que responde la IA.","Verifica solo si se lo piden.","Verifica con dos fuentes y detecta errores.","Verifica, explica el error y mejora su método."],
+  ["Creatividad y aplicación","Repite ejemplos de clase.","Adapta un ejemplo a su caso.","Resuelve un problema real con IA.","Combina varias herramientas de forma original."],
+  ["Uso responsable","No considera riesgos.","Conoce el semáforo de datos.","Lo aplica y evita datos sensibles.","Orienta a otros y propone reglas de uso."],
+  ["Presentación y trabajo en equipo","Presentación confusa.","Presenta con apoyo del docente.","Clara y dentro del tiempo.","Clara, convincente y con demo funcionando."]
+ ]
+};
+
+var FICHA = [
+ ["Nombre del proyecto","Ej.: Mi tutor de inglés de bolsillo."],
+ ["Integrantes","Nombres de los 2 o 3 miembros del equipo."],
+ ["Problema que resuelve","¿Qué te quita tiempo o te cuesta trabajo hoy?"],
+ ["Herramienta(s) de IA","Chatbot, imagen, audio, NotebookLM, hoja de cálculo."],
+ ["Prompt maestro","Escrito con R·C·T·F, listo para copiar y reutilizar."],
+ ["Ejemplo de resultado","Captura o texto de una prueba real."],
+ ["Riesgos y cómo los controlo","Datos que no compartiré y cómo verificaré el resultado."],
+ ["Mejora para la próxima versión","Una cosa que cambiarías después de probarlo."]
+];
+
+/* ============ UTILIDADES ============ */
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function fmt(m){var h=Math.floor(m/60),mm=m%60;return h+":"+(mm<10?"0":"")+mm;}
+function linkCard(id){var r=R[id];return '<li><a class="lk" href="'+esc(r.u)+'" target="_blank" rel="noopener"><span class="k">'+KIND[r.k]+'</span><span class="t"><b>'+esc(r.t)+'</b><span>'+esc(r.s)+'</span></span></a></li>';}
+function inlineLinks(ids){return '<div class="inl">'+ids.map(function(id){var r=R[id];return '<a href="'+esc(r.u)+'" target="_blank" rel="noopener">'+esc(r.t.length>34?r.t.slice(0,32)+"…":r.t)+'</a>';}).join("")+'</div>';}
+function promptBox(p){return '<div class="prompt"><pre>'+esc(p)+'</pre><button type="button" class="btn" data-copy>Copiar</button></div>';}
+function sum(arr){return arr.reduce(function(a,b){return a+b;},0);}
+function legend(){return '<div class="legend">'+Object.keys(TYPES).map(function(k){return '<span class="t-'+k+'"><i></i>'+TYPES[k].n+'</span>';}).join("")+'</div>';}
+function totals(){var t={};CLASES.forEach(function(c){c.blocks.forEach(function(b){t[b.type]=(t[b.type]||0)+b.m;});});return t;}
+
+/* ============ VISTAS ============ */
+function viewResumen(){
+  var t=totals(), all=sum(Object.keys(t).map(function(k){return t[k];}));
+  var activo=t.practica+t.juego, pct=Math.round(activo*100/all);
+  var mix='<div class="mix" role="img" aria-label="Distribución del tiempo del módulo">'+Object.keys(TYPES).map(function(k){return '<span class="t-'+k+'" style="flex:'+(t[k]||0)+' 1 0" title="'+TYPES[k].n+': '+(t[k]||0)+' min"></span>';}).join("")+'</div>';
+  var cards=CLASES.map(function(c){return '<a href="#'+c.id+'"><span class="n">Clase '+c.n+' · 3 h</span><h3>'+esc(c.title)+'</h3><p>'+esc(c.sub)+'</p><span class="go">Ver el plan →</span></a>';}).join("");
+  return '<section class="view" id="v-resumen" hidden>'+
+  '<p class="lead">Cuatro clases de tres horas para que personas sin experiencia aprendan a usar herramientas de inteligencia artificial en la casa, el estudio y el trabajo. Cada clase mezcla explicación corta, práctica guiada y dinámicas, con herramientas gratuitas y ejemplos cotidianos.</p>'+
+  '<div class="route">'+cards+'</div>'+
+  '<div class="sec"><h2>Cómo se reparte el tiempo</h2><div class="panel"><p><b>'+pct+'%</b> del módulo es práctica y dinámica; solo '+Math.round(t.explica*100/all)+'% es explicación. Los '+all+' minutos incluyen '+t.descanso+' de descanso.</p>'+mix+legend()+'</div></div>'+
+  '<div class="sec"><h2>Antes de empezar</h2><div class="cols">'+
+   '<div class="panel"><h3>Lo que necesita cada alumno</h3><ul><li>Un celular o computador con internet.</li><li>Una cuenta de Gmail con contraseña conocida.</li><li>Ganas de probar y equivocarse.</li></ul></div>'+
+   '<div class="panel"><h3>Lo que necesitas tú</h3><ul><li>Proyector y buena conexión de wifi.</li><li>Sesión iniciada en dos o tres chatbots.</li><li>Un plan B impreso por si falla internet.</li></ul></div>'+
+   '<div class="panel warn"><h3>Las herramientas cambian rápido</h3><p>Los planes gratuitos, límites y nombres de las herramientas cambian con frecuencia (por ejemplo, NotebookLM aparece ahora como Gemini Notebook). Revisa cada enlace y prueba cada práctica la semana anterior.</p></div>'+
+  '</div></div>'+
+  '<div class="sec"><h2>Todo con la capa gratuita</h2><p class="small" style="margin-bottom:12px;max-width:68ch">Este módulo está pensado para funcionar sin pagar ninguna suscripción. La capa gratuita tiene límites de uso que cambian, así que conviene planear cómo cuidarlos.</p><div class="cols">'+
+   '<div class="panel"><h3>Estrategias para no quedarse sin cuota</h3><ul><li>Trabajar en parejas: una cuenta, dos personas pensando.</li><li>Tener al menos dos chatbots por alumno. Si uno se agota, siguen con otro.</li><li>Escribir bien el prompt antes de enviarlo, para gastar menos intentos.</li><li>Guardar los resultados buenos (captura o texto) apenas salgan.</li></ul></div>'+
+   '<div class="panel"><h3>Qué herramienta se usa y con qué límite</h3><ul><li><b>Chatbots</b> (Gemini, ChatGPT, Claude, Copilot): plan gratuito con límite de mensajes y de modelos.</li><li><b>Canva</b>: hasta 50 usos de texto a imagen en total en cuenta gratuita, según Canva.</li><li><b>Suno</b>: hasta 10 canciones por día, según su sitio.</li><li><b>Ideogram, ElevenLabs, NotebookLM</b>: revisar sus límites gratuitos antes de la clase 3.</li></ul></div>'+
+   '<div class="panel soft"><h3>Planes B si se agota</h3><ul><li>Imágenes: Copilot o Canva como alternativas entre sí.</li><li>Audio y música: el docente muestra un ejemplo ya generado.</li><li>Chatbot agotado: cambiar de herramienta o seguir al día siguiente.</li><li>Hoja de cálculo: pedir la fórmula al chatbot en vez de usar funciones de IA integradas.</li></ul></div>'+
+  '</div></div>'+
+  '<div class="sec"><h2>Evaluación sugerida</h2><div class="cols">'+
+   '<div class="panel soft"><h3>30% · Participación y bitácora</h3><p class="small">Asistencia, tareas y registro semanal de uso de la IA.</p></div>'+
+   '<div class="panel soft"><h3>30% · Ejercicios de clase</h3><p class="small">Lista de ejercicios del Material del alumno.</p></div>'+
+   '<div class="panel soft"><h3>40% · Proyecto final</h3><p class="small">Presentación de 3 minutos con la rúbrica de la sección Evaluación.</p></div>'+
+  '</div></div>'+
+  '</section>';
+}
+
+function viewClase(c){
+  var acc=0, segs="", ticks="";
+  var total=sum(c.blocks.map(function(b){return b.m;}));
+  c.blocks.forEach(function(b){segs+='<span class="t-'+b.type+'" style="flex:'+b.m+' 1 0" title="'+esc(b.title)+' · '+b.m+' min"></span>';});
+  [0,60,120,180].forEach(function(m){ticks+='<span style="left:'+(m*100/total)+'%">'+fmt(m)+'</span>';});
+  var tl=c.blocks.map(function(b){
+    var s=acc; acc+=b.m;
+    var h='<article class="blk t-'+b.type+'"><div class="time">'+fmt(s)+' – '+fmt(acc)+'<b>'+b.m+' min</b></div><div class="body"><span class="chip"><i></i>'+TYPES[b.type].n+'</span><h4>'+esc(b.title)+'</h4><p>'+esc(b.d)+'</p>';
+    if(b.steps){h+='<ul class="steps">'+b.steps.map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul>';}
+    if(b.prompts){h+=b.prompts.map(promptBox).join("");}
+    if(b.tip){h+='<div class="tip"><b>Tip</b>'+esc(b.tip)+'</div>';}
+    if(b.links){h+=inlineLinks(b.links);}
+    return h+'</div></article>';
+  }).join("");
+  return '<section class="view" id="v-'+c.id+'" hidden>'+
+  '<div class="chead"><div class="eyebrow">Clase '+c.n+' de 4 · '+total+' minutos</div><h2>'+esc(c.title)+'</h2><p class="lead">'+esc(c.obj)+'</p></div>'+
+  '<div class="cols sec"><div class="panel"><h3>Al terminar, el alumno podrá</h3><ul class="goals">'+c.goals.map(function(g){return '<li>'+esc(g)+'</li>';}).join("")+'</ul></div>'+
+  '<div class="panel soft"><h3>Preparación del docente</h3><ul>'+c.prep.map(function(g){return '<li>'+esc(g)+'</li>';}).join("")+'</ul></div></div>'+
+  '<div class="sec"><h2>Cronograma</h2><div class="bar" role="img" aria-label="Distribución de la clase por bloques">'+segs+'</div><div class="ticks" aria-hidden="true">'+ticks+'</div>'+legend()+'</div>'+
+  '<div class="sec"><div class="tl">'+tl+'</div></div>'+
+  '<div class="cols sec"><div class="panel"><h3>Tarea para la casa</h3><p>'+esc(c.tarea)+'</p></div><div class="panel"><h3>Consejos para ti</h3><ul>'+c.tips.map(function(g){return '<li>'+esc(g)+'</li>';}).join("")+'</ul></div></div>'+
+  '<div class="sec"><h2>Quiz de cierre</h2>'+c.quiz.map(function(q){return '<details><summary>'+esc(q[0])+'</summary><p>'+esc(q[1])+'</p></details>';}).join("")+'</div>'+
+  '<div class="sec"><h2>Recursos de la clase</h2><ul class="links">'+c.resources.map(linkCard).join("")+'</ul></div>'+
+  '</section>';
+}
+
+function viewAlumno(){
+  var ej=EJERCICIOS.map(function(g,gi){return '<div class="panel"><h3>'+esc(g.c)+'</h3><ul class="chk">'+g.items.map(function(it,i){var id="ej-"+gi+"-"+i;return '<li><label for="'+id+'"><input type="checkbox" id="'+id+'" data-ck><span>'+esc(it)+'</span></label></li>';}).join("")+'</ul></div>';}).join("");
+  var gl='<div class="tw"><table><thead><tr><th>Término</th><th>Qué significa</th></tr></thead><tbody>'+GLOSARIO.map(function(g){return '<tr><td>'+esc(g[0])+'</td><td>'+esc(g[1])+'</td></tr>';}).join("")+'</tbody></table></div>';
+  var ficha='<div class="tw"><table><thead><tr><th>Campo</th><th>Qué escribir</th></tr></thead><tbody>'+FICHA.map(function(g){return '<tr><td>'+esc(g[0])+'</td><td>'+esc(g[1])+'</td></tr>';}).join("")+'</tbody></table></div>';
+  var bit='<div class="tw"><table><thead><tr><th>Fecha</th><th>Qué le pedí a la IA</th><th>Herramienta</th><th>Qué respondió</th><th>Qué corregí o verifiqué</th></tr></thead><tbody><tr><td>Ej.: lunes</td><td>Un mensaje para cobrar una factura</td><td>Gemini</td><td>Un texto muy formal</td><td>Lo hice más cercano y revisé el monto</td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr></tbody></table></div>';
+  return '<section class="view" id="v-alumno" hidden>'+
+  '<p class="lead">Material para entregar o compartir con los alumnos: la cartilla del prompt, el semáforo de datos, reglas de oro, glosario, lista de ejercicios y plantillas.</p>'+
+  '<div class="sec"><h2>Cartilla del prompt: R · C · T · F</h2><div class="formula">'+
+   '<div><b>R</b><strong>Rol</strong><span>¿Quién quieres que sea la IA? Un chef, un profesor, un asesor.</span></div>'+
+   '<div><b>C</b><strong>Contexto</strong><span>¿Cuál es la situación? Para quién, para qué, con qué cuentas.</span></div>'+
+   '<div><b>T</b><strong>Tarea</strong><span>¿Qué debe hacer exactamente? Explicar, resumir, comparar, crear.</span></div>'+
+   '<div><b>F</b><strong>Formato</strong><span>¿Cómo la quieres? Lista, tabla, 5 líneas, correo, tono amigable.</span></div>'+
+  '</div><div style="margin-top:14px">'+promptBox("Eres [rol]. Estoy en esta situación: [contexto]. Necesito que [tarea]. Responde en formato [lista / tabla / correo] y con tono [formal / amigable / sencillo].")+'</div></div>'+
+  '<div class="sec"><h2>Semáforo de datos</h2><div class="traffic">'+
+   '<div class="g"><strong><i></i>Verde: puedes compartir</strong><span class="small">Preguntas generales, textos sin nombres, ideas, recetas, ejemplos inventados.</span></div>'+
+   '<div class="y"><strong><i></i>Amarillo: con cuidado</strong><span class="small">Información de tu negocio o trabajo. Quita nombres, montos y datos que identifiquen.</span></div>'+
+   '<div class="r"><strong><i></i>Rojo: nunca</strong><span class="small">Contraseñas, números de cuentas o tarjetas, cédulas, datos de salud y datos de otras personas.</span></div>'+
+  '</div></div>'+
+  '<div class="sec"><h2>Ocho reglas de oro</h2><ol>'+REGLAS.map(function(r){return '<li>'+esc(r)+'</li>';}).join("")+'</ol></div>'+
+  '<div class="sec"><h2>Glosario</h2>'+gl+'</div>'+
+  '<div class="sec"><h2>Lista de ejercicios</h2><p class="small" style="margin-bottom:12px">Las marcas se guardan en este navegador, si el navegador lo permite.</p><div class="cols">'+ej+'</div></div>'+
+  '<div class="sec"><h2>Bitácora semanal</h2><p class="small" style="margin-bottom:12px">Copia esta tabla en un cuaderno o documento y llénala cada vez que uses la IA.</p>'+bit+'</div>'+
+  '<div class="sec"><h2>Ficha del proyecto final</h2>'+ficha+'</div>'+
+  '</section>';
+}
+
+function viewEval(){
+  var th=RUBRICA.cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join("");
+  var tb=RUBRICA.rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+esc(c)+'</td>';}).join("")+'</tr>';}).join("");
+  return '<section class="view" id="v-evaluacion" hidden>'+
+  '<p class="lead">Una propuesta de evaluación centrada en lo que el alumno hace, no en memorizar. Ajusta los porcentajes y los criterios a tu institución.</p>'+
+  '<div class="sec"><h2>Proyecto final</h2><div class="cols"><div class="panel"><h3>Qué entregan</h3><ul><li>Ficha del proyecto completa.</li><li>Prompt maestro probado.</li><li>Demostración de 3 minutos en la clase 4.</li></ul></div><div class="panel"><h3>Cómo se califica</h3><p>Con la rúbrica de abajo, del 1 al 4 por criterio. El docente califica y cada equipo recibe un comentario escrito de otro equipo.</p></div></div></div>'+
+  '<div class="sec"><h2>Rúbrica</h2><div class="tw"><table><thead><tr>'+th+'</tr></thead><tbody>'+tb+'</tbody></table></div></div>'+
+  '<div class="sec"><h2>Certificado de participación</h2><div class="panel soft"><p>Sugerencia: entregarlo a quienes asistan al menos a 3 de las 4 clases y presenten su proyecto final. Define el criterio que corresponda a tu institución.</p></div></div>'+
+  '</section>';
+}
+
+function viewRecursos(){
+  var kinds=[["web","Herramientas y sitios para practicar"],["video","Videos"],["curso","Cursos para seguir aprendiendo"],["guia","Lecturas y guías"]];
+  var html=kinds.map(function(k){
+    var ids=Object.keys(R).filter(function(id){return R[id].k===k[0];});
+    return '<div class="sec"><h2>'+k[1]+'</h2><ul class="links">'+ids.map(linkCard).join("")+'</ul></div>';
+  }).join("");
+  return '<section class="view" id="v-recursos" hidden><p class="lead">Todos los enlaces del módulo en un solo lugar. Los videos están listados por título para que revises cuáles conviene proyectar. Los de Karpathy y 3Blue1Brown están en inglés y sirven sobre todo para tu preparación.</p>'+html+'</section>';
+}
+
+/* ============ MONTAJE ============ */
+var VIEWS=[{id:"resumen",label:"Resumen"}].concat(CLASES.map(function(c){return {id:c.id,label:"Clase "+c.n};})).concat([{id:"alumno",label:"Material del alumno"},{id:"evaluacion",label:"Evaluación"},{id:"recursos",label:"Recursos"}]);
+document.getElementById("nav").innerHTML=VIEWS.map(function(v){return '<a href="#'+v.id+'" data-v="'+v.id+'">'+v.label+'</a>';}).join("");
+document.getElementById("main").innerHTML=viewResumen()+CLASES.map(viewClase).join("")+viewAlumno()+viewEval()+viewRecursos()+
+ '<footer>Prototipo del módulo. Los enlaces fueron revisados al preparar esta página; las herramientas y sus planes gratuitos pueden cambiar.</footer>';
+(function(){var t=totals(),all=sum(Object.keys(t).map(function(k){return t[k];}));
+ document.getElementById("topmeta").innerHTML='<span><b>4</b> clases</span><span><b>3 h</b> cada una</span><span><b>'+(all/60)+' h</b> en total</span><span>Público mixto</span>';})();
+
+function show(){
+  var h=(location.hash||"").replace("#","");
+  if(!VIEWS.some(function(v){return v.id===h;})){h="resumen";}
+  VIEWS.forEach(function(v){
+    document.getElementById("v-"+v.id).hidden=(v.id!==h);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#nav a"),function(a){
+    if(a.getAttribute("data-v")===h){a.setAttribute("aria-current","page");a.scrollIntoView({block:"nearest",inline:"center"});}else{a.removeAttribute("aria-current");}
+  });
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",show);
+show();
+
+/* copiar prompts */
+document.addEventListener("click",function(e){
+  var b=e.target.closest&&e.target.closest("[data-copy]"); if(!b){return;}
+  var pre=b.parentNode.querySelector("pre"), txt=pre.textContent;
+  function done(){b.textContent="Copiado";b.classList.add("ok");setTimeout(function(){b.textContent="Copiar";b.classList.remove("ok");},1600);}
+  function fallback(){var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selecciona y copia";setTimeout(function(){b.textContent="Copiar";},2200);}
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fallback);}else{fallback();} }catch(err){fallback();}
+});
+
+/* marcas de ejercicios (solo en este navegador) */
+(function(){
+  var KEY="ia-vida-diaria-ejercicios", saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){saved={};}
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ck]"),function(c){
+    if(saved[c.id]){c.checked=true;}
+    c.addEventListener("change",function(){saved[c.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}});
+  });
+})();
+</script>
+
+</body></html>
